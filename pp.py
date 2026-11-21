@@ -1,10 +1,9 @@
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer, WebRtcMode
 
 st.set_page_config(page_title="دوربین آنلاین", layout="wide")
-st.title("📹 پنل نظارت بر دوربین کاربران")
+st.title("پنل نظارت بر دوربین کاربران")
 
-# تعریف سرور STUN برای عبور از فایروال‌ها
+# تعریف تنظیمات اتصال امن
 rtc_configuration = {
     "iceServers": [
         {"urls": ["stun:stun.l.google.com:19302"]}
@@ -12,19 +11,18 @@ rtc_configuration = {
 }
 
 try:
-    # استفاده از حالت RECV_SEND برای اطمینان از اتصال دوطرفه
-    # اگر فقط تصویر کاربر را می‌خواهید، این بهترین حالت است
-    video = webrtc_streamer(
+    # فراخوانی مستقیم تابع بدون نیاز به کلاس WebRtcMode
+    video = st.webrtc.streamer(
         key="camera-stream",
-        mode=WebRtcMode.RECV_SEND, 
+        mode="recv-send", # حالت استاندارد برای تماس دوطرفه
         rtc_configuration=rtc_configuration,
         media_stream_constraints={"video": True, "audio": False}
     )
 
-    if video.video_track:
+    if hasattr(video, 'video_track') and video.video_track is not None:
         st.success("✅ تصویر کاربر دریافت شد.")
     else:
         st.info("⏳ منتظر اتصال کاربر...")
 
 except Exception as e:
-    st.error(f"خطا در ارتباط: {e}")
+    st.error(f"خطا: {e}")
