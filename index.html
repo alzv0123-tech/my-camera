@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>دسترسی به دوربین</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #1a1a1a;
+            color: white;
+            font-family: Tahoma, sans-serif;
+            margin: 0;
+            flex-direction: column;
+        }
+        .container {
+            text-align: center;
+        }
+        video {
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 640px;
+            background-color: #000;
+        }
+        button {
+            margin-top: 20px;
+            padding: 12px 24px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #status {
+            margin-top: 10px;
+            color: #ffcc00;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>دوربین آنلاین شما</h2>
+        <video id="videoElement" autoplay playsinline></video>
+        <p id="status"></p>
+        <button onclick="startCamera()">فعال‌سازی دوربین</button>
+    </div>
+
+    <script>
+        const video = document.getElementById('videoElement');
+        const statusText = document.getElementById('status');
+
+        async function startCamera() {
+            statusText.textContent = "در حال درخواست دسترسی...";
+            try {
+                // درخواست دسترسی به دوربین
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: "user" }, // "user" برای سلفی، "environment" برای پشت
+                    audio: false 
+                });
+                
+                video.srcObject = stream;
+                statusText.textContent = "✅ دوربین فعال است.";
+            } catch (err) {
+                statusText.textContent = "❌ خطا: دسترسی داده نشد. لطفاً مجوز مرورگر را بررسی کنید.";
+                console.error(err);
+            }
+        }
+    </script>
+
+</body>
+</html>
