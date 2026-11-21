@@ -1,25 +1,22 @@
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer, WebRtcMode, RTCConfiguration
+from streamlit_webrtc import webrtc_streamer, WebRtcMode
 
 st.set_page_config(page_title="دوربین آنلاین", layout="wide")
 st.title("📹 پنل نظارت بر دوربین کاربران")
 
-# تعریف سرورهای STUN برای اتصال بهتر
-rtc_configuration: RTCConfiguration = {
+# تعریف سرور STUN برای عبور از فایروال‌ها
+rtc_configuration = {
     "iceServers": [
         {"urls": ["stun:stun.l.google.com:19302"]}
     ]
 }
 
 try:
-    # تنظیمات دوربین کاربر
-    # mode=WebRtcMode.RECV_SEND یعنی هم تصویر شما و هم تصویر کاربر قابل مشاهده باشد
-    # اگر فقط می‌خواهید تصویر کاربر را ببینید (بدون صدا/تصویر خودتان)، 
-    # می‌توانید از مد RECV_ONLY یا SEND_ONLY (با سینتکس جدید) استفاده کنید.
-    
+    # استفاده از حالت RECV_SEND برای اطمینان از اتصال دوطرفه
+    # اگر فقط تصویر کاربر را می‌خواهید، این بهترین حالت است
     video = webrtc_streamer(
         key="camera-stream",
-        mode=WebRtcMode.SEND_ONLY, # این حالت فقط تصویر کاربر را ارسال می‌کند
+        mode=WebRtcMode.RECV_SEND, 
         rtc_configuration=rtc_configuration,
         media_stream_constraints={"video": True, "audio": False}
     )
